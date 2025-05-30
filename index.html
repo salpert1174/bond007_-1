@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Bond007 Skip-Strike Butterfly Calculator v2.1</title>
+    <title>Bond007 Skip-Strike Butterfly Calculator v2.2</title>
     <link rel="stylesheet" href="app.css">
 </head>
 <body>
@@ -36,14 +36,14 @@
                 return;
             }
 
-            let wing1 = Math.abs(s - l1); // first long to short
-            let wing2 = Math.abs(l2 - s); // short to second long
+            let wing1 = Math.abs(s - l1);
+            let wing2 = Math.abs(l2 - s);
 
             let narrowWing = Math.min(wing1, wing2);
             let wideWing = Math.max(wing1, wing2);
 
             let maxProfit = (narrowWing * 100 - net * 100) * contracts;
-            let maxLoss = (wideWing - narrowWing + net) * 100 * contracts;
+            let maxLoss = ((wideWing - narrowWing) * 100 + net * 100) * contracts;
 
             let breakevenLow, breakevenHigh;
 
