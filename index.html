@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bond007 SPX Butterfly Calculator</title>
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Bond007 SPX Skip-Strike Butterfly Calculator</h1>
+        <label>Short Strike: <input type="number" id="shortStrike"></label>
+        <label>Long Strike: <input type="number" id="longStrike"></label>
+        <label>Credit Received ($): <input type="number" id="creditReceived"></label>
+        <label>Contracts: <input type="number" id="contracts" value="1"></label>
+        <button onclick="calculate()">Calculate</button>
+        <div id="results"></div>
+    </div>
+    <script>
+        function calculate() {
+            const short = parseFloat(document.getElementById('shortStrike').value);
+            const long = parseFloat(document.getElementById('longStrike').value);
+            const credit = parseFloat(document.getElementById('creditReceived').value);
+            const contracts = parseInt(document.getElementById('contracts').value);
+
+            if (isNaN(short) || isNaN(long) || isNaN(credit) || isNaN(contracts)) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            const width = Math.abs(short - long);
+            const maxProfit = (credit * 100) * contracts;
+            const maxLoss = ((width - credit) * 100) * contracts;
+            const breakevenLower = Math.min(short, long) + credit;
+            const breakevenUpper = Math.max(short, long) - credit;
+
+            document.getElementById('results').innerHTML = `
+                <h3>Results:</h3>
+                <p>Max Profit: $${maxProfit.toFixed(2)}</p>
+                <p>Max Loss: $${maxLoss.toFixed(2)}</p>
+                <p>Breakeven Points: ${breakevenLower.toFixed(2)} to ${breakevenUpper.toFixed(2)}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
