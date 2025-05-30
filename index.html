@@ -2,42 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Bond007 SPX Butterfly Calculator</title>
+    <title>Bond007 Skip-Strike Butterfly Calculator</title>
     <link rel="stylesheet" href="app.css">
 </head>
 <body>
     <div class="container">
-        <h1>Bond007 SPX Skip-Strike Butterfly Calculator</h1>
-        <label>Short Strike: <input type="number" id="shortStrike"></label>
-        <label>Long Strike: <input type="number" id="longStrike"></label>
-        <label>Credit Received ($): <input type="number" id="creditReceived"></label>
+        <h1>Bond007 Skip-Strike Butterfly (1-2-1)</h1>
+        <label>Strategy Type:
+            <select id="type">
+                <option value="call">Call</option>
+                <option value="put">Put</option>
+            </select>
+        </label>
+        <label>First Long Strike (Buy 1): <input type="number" id="long1"></label>
+        <label>Short Strike (Sell 2): <input type="number" id="short"></label>
+        <label>Second Long Strike (Buy 1): <input type="number" id="long2"></label>
+        <label>Net Debit/Credit ($): <input type="number" id="net"></label>
         <label>Contracts: <input type="number" id="contracts" value="1"></label>
         <button onclick="calculate()">Calculate</button>
         <div id="results"></div>
     </div>
     <script>
         function calculate() {
-            const short = parseFloat(document.getElementById('shortStrike').value);
-            const long = parseFloat(document.getElementById('longStrike').value);
-            const credit = parseFloat(document.getElementById('creditReceived').value);
+            const type = document.getElementById('type').value;
+            const l1 = parseFloat(document.getElementById('long1').value);
+            const s = parseFloat(document.getElementById('short').value);
+            const l2 = parseFloat(document.getElementById('long2').value);
+            const net = parseFloat(document.getElementById('net').value);
             const contracts = parseInt(document.getElementById('contracts').value);
 
-            if (isNaN(short) || isNaN(long) || isNaN(credit) || isNaN(contracts)) {
-                alert('Please fill in all fields.');
+            if (isNaN(l1) || isNaN(s) || isNaN(l2) || isNaN(net) || isNaN(contracts)) {
+                alert("Please fill in all fields.");
                 return;
             }
 
-            const width = Math.abs(short - long);
-            const maxProfit = (credit * 100) * contracts;
-            const maxLoss = ((width - credit) * 100) * contracts;
-            const breakevenLower = Math.min(short, long) + credit;
-            const breakevenUpper = Math.max(short, long) - credit;
+            let wing1 = Math.abs(s - l1);
+            let wing2 = Math.abs(l2 - s);
+            let maxProfit = (Math.min(wing1, wing2) * 100 - net * 100) * contracts;
+            let maxLoss = (Math.abs(wing1 - wing2) * 100 + net * 100) * contracts;
+            let breakevenLow, breakevenHigh;
+
+            if (type === "call") {
+                breakevenLow = l1 + net;
+                breakevenHigh = l2 - net;
+            } else {
+                breakevenLow = l2 + net;
+                breakevenHigh = l1 - net;
+            }
 
             document.getElementById('results').innerHTML = `
                 <h3>Results:</h3>
                 <p>Max Profit: $${maxProfit.toFixed(2)}</p>
                 <p>Max Loss: $${maxLoss.toFixed(2)}</p>
-                <p>Breakeven Points: ${breakevenLower.toFixed(2)} to ${breakevenUpper.toFixed(2)}</p>
+                <p>Breakeven Range: ${breakevenLow.toFixed(2)} to ${breakevenHigh.toFixed(2)}</p>
             `;
         }
     </script>
